@@ -420,7 +420,7 @@ class ChaseCamera(object):
         veln, n = normalize(self.vel_smooth)
         up = npa(0, 0, 1)
         ideal_vel, _ = normalize(self.goal - self.pos_smooth)
-        if True or np.abs(veln[2]) > 0.95 or n < 0.01 or np.dot(veln, ideal_vel) < 0.7:
+        if False:  # or np.abs(veln[2]) > 0.95 or n < 0.01 or np.dot(veln, ideal_vel) < 0.7:
             # look towards goal even though we are not heading there
             right, _ = normalize(cross(ideal_vel, up))
         else:
@@ -587,7 +587,7 @@ class Quadrotor3DScene(object):
             np.eye(4), (0, 0, 0, 0.4), r3d.circle(0.75*diameter, 32))
 
         # TODO make floor size or walls to indicate world_box
-        floor = r3d.ProceduralTexture(r3d.random_textype(), (0.15, 0.25),
+        floor = r3d.ProceduralTexture(r3d.TEX_XOR, (0.15, 0.25),
             r3d.rect((1000, 1000), (0, 100), (0, 100)))
 
         self.goal_transform = r3d.transform_and_color(np.eye(4),
@@ -631,11 +631,14 @@ class Quadrotor3DScene(object):
             np.matmul(r3d.translate((0, 0, -arm_thicc)), r3d.rotz(np.pi / 4)), arm_color,
             [r3d.box(diam/10, diam, arm_thicc), r3d.box(diam, diam/10, arm_thicc)])
 
-        arrow = r3d.Color((0.2, 0.3, 0.9), r3d.arrow(0.12*prop_r, 2.5*prop_r, 16))
+        arrow_x = r3d.transform_and_color(r3d.rotx(-np.pi/2), (1,0,0), [r3d.arrow(0.12*prop_r, 2.5*prop_r, 16)])
+        arrow_y = r3d.transform_and_color(r3d.roty(np.pi/2), (0,1,0), [r3d.arrow(0.12*prop_r, 2.5*prop_r, 16)])
+        arrow_z = r3d.Color((0.2, 0.3, 0.9), r3d.arrow(0.12*prop_r, 2.5*prop_r, 16))
 
-        bodies = props + [arms, arrow]
+        bodies = props + [arms, arrow_x, arrow_y, arrow_z]
         self.have_state = False
-        return r3d.Transform(np.eye(4), bodies)
+        # return r3d.Transform(np.eye(4), bodies)
+        return r3d.Transform(r3d.roty(-np.pi/2), bodies)
 
     # TODO allow resampling obstacles?
     def reset(self, goal, dynamics):

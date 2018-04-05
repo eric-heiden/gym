@@ -7,7 +7,7 @@ import os
 import six
 import sys
 import itertools
-import noise
+# import noise
 import ctypes
 
 if "Apple" in sys.version:
@@ -310,22 +310,22 @@ class ProceduralTexture(SceneNode):
         elif style == TEX_NOISE_GAUSSIAN:
             nz = np.random.normal(size=(256,256))
             image = np.clip(nz, -3, 3)
-        elif style == TEX_NOISE_PERLIN:
-            t = np.linspace(0, 1, 256)
-            nzfun = lambda x, y: noise.pnoise2(x, y,
-                octaves=10, persistence=0.8, repeatx=1, repeaty=1)
-            image = np.vectorize(nzfun)(*np.meshgrid(t, t))
-        elif style == TEX_OILY:
-            # from upvector.com "Intro to Procedural Textures"
-            t = np.linspace(0, 4, 256)
-            nzfun = lambda x, y: noise.snoise2(x, y,
-                octaves=10, persistence=0.45, repeatx=4, repeaty=4)
-            nz = np.vectorize(nzfun)(*np.meshgrid(t, t))
-
-            t = np.linspace(0, 20*np.pi, 257)[:-1]
-            x, y = np.meshgrid(t, t)
-            image = np.sin(x + 8*nz)
-        elif style == TEX_VORONOI:
+        # elif style == TEX_NOISE_PERLIN:
+        #     t = np.linspace(0, 1, 256)
+        #     nzfun = lambda x, y: noise.pnoise2(x, y,
+        #         octaves=10, persistence=0.8, repeatx=1, repeaty=1)
+        #     image = np.vectorize(nzfun)(*np.meshgrid(t, t))
+        # elif style == TEX_OILY:
+        #     # from upvector.com "Intro to Procedural Textures"
+        #     t = np.linspace(0, 4, 256)
+        #     nzfun = lambda x, y: noise.snoise2(x, y,
+        #         octaves=10, persistence=0.45, repeatx=4, repeaty=4)
+        #     nz = np.vectorize(nzfun)(*np.meshgrid(t, t))
+        #
+        #     t = np.linspace(0, 20*np.pi, 257)[:-1]
+        #     x, y = np.meshgrid(t, t)
+        #     image = np.sin(x + 8*nz)
+        else:
             npts = 64
             points = np.random.uniform(size=(npts, 2))
             # make it tile
@@ -340,8 +340,8 @@ class ProceduralTexture(SceneNode):
                 dist2 = (x - p[0])**2 + (y - p[1])**2
                 a = np.minimum(a, dist2)
             image = np.sqrt(a)
-        else:
-            raise KeyError("style does not exist")
+        # else:
+        #     raise KeyError("style does not exist")
 
         low, high = 255.0 * scale[0], 255.0 * scale[1]
         _scale_to_inplace(image, low, high)
